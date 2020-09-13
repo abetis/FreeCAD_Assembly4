@@ -39,7 +39,7 @@ class showLcsCmd:
     +-----------------------------------------------+
     """
     def Activated(self):
-        global sos, so, doc
+        global sos, so, vis
         sos = 0
         so = 0
         start = time.time()
@@ -51,24 +51,11 @@ class showLcsCmd:
                 ShowChildLCSs(model.getSubObject(objName, 1), True)
         else:
             ShowChildLCSs(Asm4.getSelection(), True)
-        
+
         end = time.time()
         print("Activated sos = " + str(sos))
         print("Activated so = " + str(so))
-        print("Time (sec): " + str(end-start))
-        
-        doc = 0
-        start = time.time()
-        model = Asm4.getModelSelected()
-        if model:
-            doc = doc+1
-            for obj in model.getSubObjectsDoc():
-                ShowChildLCSsFast(obj, True)
-        else:
-            ShowChildLCSsFast(Asm4.getSelection(), True)
-
-        end = time.time()
-        print("Fast doc = " + str(doc))
+        print("Activated vis = " + str(vis))
         print("Time (sec): " + str(end-start))
 
 
@@ -104,38 +91,27 @@ class hideLcsCmd:
 
 sos = 0
 so = 0
-doc = 0
+vis = 0
 
 # Show/Hide the LCSs in the provided object and all linked children
 def ShowChildLCSs(obj, show):
-    global sos, so
+    global sos, so, vis
     lcsTypes = ["PartDesign::CoordinateSystem", "PartDesign::Line", "PartDesign::Point", "PartDesign::Plane"]
 
     if obj.TypeId == 'App::Link':
         for linkObj in obj.LinkedObject.Document.Objects:
             ShowChildLCSs(linkObj, show)
     else:
-        sos = sos+1
-        for subObjName in obj.getSubObjects():
-            so = so+1
-            subObj = obj.getSubObject(subObjName, 1)    # 1 for returning the real object
-            if subObj != None:
-                if subObj.TypeId in lcsTypes:
-                    subObj.Visibility = show
+        if obj.TypeId in Asm4.containerTypes:
+            sos = sos+1
+            for subObjName in obj.getSubObjects():
+                so = so+1
+                subObj = obj.getSubObject(subObjName, 1)    # 1 for returning the real object
+                if subObj != None:
+                    if subObj.TypeId in lcsTypes:
+                        vis = vis+1
+                        subObj.Visibility = show
 
-def ShowChildLCSsFast(obj, show):
-    global doc
-    lcsTypes = ["PartDesign::CoordinateSystem", "PartDesign::Line", "PartDesign::Point", "PartDesign::Plane"]
-
-    if obj.TypeId == 'App::Link':
-        for linkObj in obj.LinkedObject.Document.Objects:
-            ShowChildLCSsFast(linkObj, show)
-    else:
-        doc = doc+1
-        for subObj in obj.getSubObjectsDoc(0, 1):
-            if subObj != None:
-                if subObj.TypeId in lcsTypes:
-                    subObj.Visibility = show
 
 """
     +-----------------------------------------------+
