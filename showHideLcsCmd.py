@@ -39,9 +39,13 @@ class showLcsCmd:
     +-----------------------------------------------+
     """
     def Activated(self):
+        global processedLinks
+        processedLinks = []
+
         global sos, so, vis
         sos = 0
         so = 0
+        vis = 0
         start = time.time()
         model = Asm4.getModelSelected()
         if model:
@@ -81,6 +85,9 @@ class hideLcsCmd:
     +-----------------------------------------------+
     """
     def Activated(self):
+        global processedLinks
+        processedLinks = []
+
         model = Asm4.getModelSelected()
         if model:
             for objName in model.getSubObjects():
@@ -93,12 +100,15 @@ sos = 0
 so = 0
 vis = 0
 
+processedLinks = []
+
 # Show/Hide the LCSs in the provided object and all linked children
 def ShowChildLCSs(obj, show):
     global sos, so, vis
-    lcsTypes = ["PartDesign::CoordinateSystem", "PartDesign::Line", "PartDesign::Point", "PartDesign::Plane"]
+    global processedLinks
 
-    if obj.TypeId == 'App::Link':
+    if obj.TypeId == 'App::Link' and obj.Name not in processedLinks:
+        processedLinks.append(obj.Name)
         for linkObj in obj.LinkedObject.Document.Objects:
             ShowChildLCSs(linkObj, show)
     else:
@@ -108,7 +118,7 @@ def ShowChildLCSs(obj, show):
                 so = so+1
                 subObj = obj.getSubObject(subObjName, 1)    # 1 for returning the real object
                 if subObj != None:
-                    if subObj.TypeId in lcsTypes:
+                    if subObj.TypeId in Asm4.datumTypes:
                         vis = vis+1
                         subObj.Visibility = show
 
