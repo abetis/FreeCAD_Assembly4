@@ -87,6 +87,7 @@ class Assembly4Workbench(Workbench):
         import HelpCmd             # shows a basic help window
         import showHideLcsCmd      # shows/hides all the LCSs
         import configurationEngine  # save/restore configuration
+        import explodeCmd           # explode assembly
 
         # check whether the Fasteners workbench is installed
         if self.checkWorkbench('FastenersWorkbench'):
@@ -162,6 +163,7 @@ class Assembly4Workbench(Workbench):
                                 "Asm4_Measure", 
                                 "Asm4_variablesCmd",
                                 "Asm4_Animate",
+                                "Asm4_explodeCmd",
                                 "Asm4_updateAssembly"]
         self.appendToolbar("Assembly",itemsAssemblyToolbar)
 
@@ -186,7 +188,9 @@ class Assembly4Workbench(Workbench):
                         'Asm4_placeFastener' ,
                         'Separator'          ,
                         'Asm4_saveConfiguration',
-                        'Asm4_restoreConfiguration']
+                        'Asm4_restoreConfiguration',
+                        'Separator',
+                        'Asm4_explodeCmd' ]
         # commands to appear in the 'Create' sub-menu in the contextual menu (right-click)
         createSubMenu = [  "Asm4_newSketch",  
                         "Asm4_newBody", 
